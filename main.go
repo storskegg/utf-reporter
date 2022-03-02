@@ -88,7 +88,7 @@ func main() {
 
 	// Capture piped input, capturing runes
 	reader := bufio.NewReader(input)
-	captured := make(rune2.SpecialRunesLines)
+	//captured := make(rune2.SpecialRunesLines)
 
 	lineNum := 0
 	colNum := 0
@@ -96,49 +96,52 @@ func main() {
 	var sr rune2.SpecialRunes
 	var rr rune2.Rune
 
+	// Set up our console formatters
+	titleFmt := color.New(color.FgHiWhite, color.Bold).PrintfFunc()
+	headerFmt := color.New(color.FgHiBlue, color.Underline).SprintfFunc()
+	columnFmt := color.New(color.FgYellow).SprintfFunc()
+
+	// Instantiate a reusable table to be reassigned each lines iteration
+	var tbl table.Table
+
 	for {
-		lineNum++
+		// Create a table for each line
+		tbl = table.New("Column", "Rune", "Hex", "Type", "Width", "Reference")
+		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt).WithPadding(3)
+		tbl.WithWidthFunc(func(s string) int {
+			return runes.WidthAll([]rune(s))
+		})
+
 		input, _, err := reader.ReadLine()
 		if err != nil && err == io.EOF {
 			break
 		}
 
-		sr := rune2.ProcessLine(string(input))
+		sr = rune2.ProcessLine(string(input))
 		if sr == nil {
 			continue
 		}
-		captured[lineNum] = sr
+		for _, colNum = range sr.SortedColumns() {
+			rr = sr[colNum]
+			tbl.AddRow(
+				colNum,
+				fmt.Sprintf("'%c'", rr),
+				"0x"+rr.CharCodeWithPadding(),
+				rr.RuneType(),
+				runes.Width(rune(rr)),
+				fmt.Sprintf("https://www.compart.com/en/unicode/U+%s", strings.ToUpper(rr.CharCodeWithPadding())),
+			)
+		}
+
+		// Print our title and table
+		titleFmt("Line %d Table\n", lineNum+1)
+		tbl.Print()
+		fmt.Println()
+		//captured[lineNum] = sr
+		lineNum++
 	}
 
-	headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
-	columnFmt := color.New(color.FgYellow).SprintfFunc()
-
-	if len(captured) == 0 {
+	if lineNum == 0 {
 		fmt.Println("No non-standard characters found.")
-	} else {
-		for _, lineNum := range captured.SortedColumns() {
-			tbl := table.New("Column", "Rune", "Hex", "Type", "Width", "Reference")
-			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt).WithPadding(3)
-			tbl.WithWidthFunc(func(s string) int {
-				return runes.WidthAll([]rune(s))
-			})
-
-			sr = captured[lineNum]
-			for _, colNum = range sr.SortedColumns() {
-				rr = sr[colNum]
-				tbl.AddRow(
-					colNum,
-					fmt.Sprintf("'%c'", rr),
-					"0x"+rr.CharCodeWithPadding(),
-					rr.RuneType(),
-					runes.Width(rune(rr)),
-					fmt.Sprintf("https://www.compart.com/en/unicode/U+%s", strings.ToUpper(rr.CharCodeWithPadding())),
-				)
-				//fmt.Printf(" Found: 0x%s ('%c') at column %d of type %s\n", rr.CharCodeWithPadding(), rr, colNum, rr.RuneType())
-			}
-			color.HiWhite("Line %d:", lineNum)
-			tbl.Print()
-			fmt.Println()
-		}
 	}
 }
