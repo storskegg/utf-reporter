@@ -22,7 +22,7 @@ A recurring issue I've experienced throughout my engineering career is the prese
 
 Regardless, you're now dealing with some unexpected behavior in your system.
 
-Obviously, this could be solved by "simply supporting extended charsets," but in the real world, on real systems, that's not always practical, let along feasible. So, for those cases, I originally wrote a small, janky CodePen app that would detect and highlight these characters.
+Obviously, this could be solved by "simply supporting extended charsets," but in the real world, on real systems, that's not always practical, let along feasible. So, for those cases, I originally wrote a small, janky [CodePen app](https://codepen.io/storskegg/pen/geEEPE?editors=0010) that would detect and highlight these characters.
 
 I needed something to parse through massive CSV's, so I ported the pen to this little CLI app.
 
