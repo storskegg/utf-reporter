@@ -97,17 +97,25 @@ func main() {
 	var rr runic.Runic
 
 	// Set up our console formatters
-	titleFmt := color.New(color.FgHiWhite, color.Bold).PrintfFunc()
+	//titleFmt := color.New(color.FgHiWhite, color.Bold).PrintfFunc()
 	headerFmt := color.New(color.FgHiBlue, color.Underline).SprintfFunc()
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 
-	// Instantiate a reusable table to be reassigned each lines iteration
-	var tbl table.Table
+	tbl := table.New("Line", "Column", "Rune", "Hex", "Type", "Width", "Reference")
+	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt).WithPadding(3)
+	tbl.WithWidthFunc(func(s string) int {
+		return runes.WidthAll([]rune(s))
+	})
 
 	for {
 		input, _, err := reader.ReadLine()
 		if err != nil && err == io.EOF {
 			break
+		}
+
+		if err != nil {
+			panic(err)
+			return
 		}
 
 		lineNum++
@@ -121,16 +129,10 @@ func main() {
 			continue
 		}
 
-		// Create a table for each line
-		tbl = table.New("Column", "Rune", "Hex", "Type", "Width", "Reference")
-		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt).WithPadding(3)
-		tbl.WithWidthFunc(func(s string) int {
-			return runes.WidthAll([]rune(s))
-		})
-
 		for _, colNum = range sr.SortedColumns() {
 			rr, _ = sr.Get(colNum)
 			tbl.AddRow(
+				lineNum,
 				colNum,
 				fmt.Sprintf("'%c'", rr),
 				"0x"+rr.CharCodeWithPadding(),
@@ -139,15 +141,14 @@ func main() {
 				fmt.Sprintf("https://www.compart.com/en/unicode/U+%s", strings.ToUpper(rr.CharCodeWithPadding())),
 			)
 		}
-
-		// Print our title and table
-		titleFmt("Line %d Table\n", lineNum)
-		tbl.Print()
-		fmt.Println()
-		//captured[lineNum] = sr
 	}
 
 	if lineNum == 0 {
 		fmt.Println("No non-standard characters found.")
+		return
 	}
+
+	// Print our title and table
+	tbl.Print()
+	fmt.Println()
 }
