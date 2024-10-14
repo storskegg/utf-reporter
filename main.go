@@ -122,13 +122,13 @@ func main() {
 			continue
 		}
 		for _, colNum = range sr.SortedColumns() {
-			rr = sr[colNum]
+			rr, _ = sr.Get(colNum)
 			tbl.AddRow(
 				colNum,
 				fmt.Sprintf("'%c'", rr),
 				"0x"+rr.CharCodeWithPadding(),
 				rr.RuneType(),
-				runes.Width(rune(rr)),
+				runes.Width(rr.Rune()),
 				fmt.Sprintf("https://www.compart.com/en/unicode/U+%s", strings.ToUpper(rr.CharCodeWithPadding())),
 			)
 		}
