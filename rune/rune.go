@@ -6,10 +6,26 @@ import (
 	"strings"
 )
 
+type RuneType int
+
+func (rt RuneType) String() string {
+	return runeTypeLabels[rt]
+}
+
 const (
-	ASCII = "ASCII"
-	UTF   = "UTF"
+	ASCII RuneType = iota
+	UTF
 )
+
+const (
+	RuneTypeLabelASCII = "ASCII"
+	RuneTypeLabelUTF   = "UTF"
+)
+
+var runeTypeLabels = map[RuneType]string{
+	ASCII: RuneTypeLabelASCII,
+	UTF:   RuneTypeLabelUTF,
+}
 
 type Rune rune
 
@@ -33,7 +49,7 @@ func (r Rune) IsNormalCharacter() bool {
 	}
 	return false
 }
-func (r Rune) RuneType() string {
+func (r Rune) RuneType() RuneType {
 	if r < 256 {
 		return ASCII
 	}
