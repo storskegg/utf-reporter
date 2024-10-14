@@ -1,4 +1,4 @@
-package rune2
+package runic
 
 import (
 	"sort"
@@ -27,7 +27,7 @@ var runeTypeLabels = map[RuneType]string{
 	UTF:   RuneTypeLabelUTF,
 }
 
-type Rune interface {
+type Runic interface {
 	Rune() rune
 	CharCode() int
 	CharCodeWithPadding() string
@@ -35,21 +35,21 @@ type Rune interface {
 	RuneType() RuneType
 }
 
-func NewRune(r rune) Rune {
-	return localRune(r)
+func NewRunic(r rune) Runic {
+	return runic(r)
 }
 
-type localRune rune
+type runic rune
 
-func (r localRune) Rune() rune {
+func (r runic) Rune() rune {
 	return rune(r)
 }
 
-func (r localRune) CharCode() int {
+func (r runic) CharCode() int {
 	return int(r)
 }
 
-func (r localRune) CharCodeWithPadding() string {
+func (r runic) CharCodeWithPadding() string {
 	s := strconv.FormatInt(int64(r.Rune()), 16)
 	pad := 4 - len(s)
 	if pad < 0 {
@@ -58,7 +58,7 @@ func (r localRune) CharCodeWithPadding() string {
 	return strings.Repeat("0", pad) + s
 }
 
-func (r localRune) IsNormalCharacter() bool {
+func (r runic) IsNormalCharacter() bool {
 	if r > 31 && r < 128 {
 		return true
 	}
@@ -68,7 +68,7 @@ func (r localRune) IsNormalCharacter() bool {
 	return false
 }
 
-func (r localRune) RuneType() RuneType {
+func (r runic) RuneType() RuneType {
 	if r < 256 {
 		return ASCII
 	}
@@ -77,12 +77,12 @@ func (r localRune) RuneType() RuneType {
 
 type SpecialRunes interface {
 	SortedColumns() []int
-	Get(idx int) (Rune, bool)
-	Set(idx int, r Rune)
+	Get(idx int) (Runic, bool)
+	Set(idx int, r Runic)
 	Len() int
 }
 
-type specialRunes map[int]Rune
+type specialRunes map[int]Runic
 
 func NewSpecialRunes() SpecialRunes {
 	return make(specialRunes)
@@ -99,12 +99,12 @@ func (sr specialRunes) SortedColumns() []int {
 	return cols
 }
 
-func (sr specialRunes) Get(idx int) (Rune, bool) {
+func (sr specialRunes) Get(idx int) (Runic, bool) {
 	r, ok := sr[idx]
 	return r, ok
 }
 
-func (sr specialRunes) Set(idx int, r Rune) {
+func (sr specialRunes) Set(idx int, r Runic) {
 	sr[idx] = r
 }
 
@@ -113,11 +113,11 @@ func (sr specialRunes) Len() int {
 }
 
 func ProcessLine(line string) SpecialRunes {
-	var rr Rune
+	var rr Runic
 	sr := NewSpecialRunes()
 
 	for idx, r := range line {
-		rr = NewRune(r)
+		rr = NewRunic(r)
 		if !rr.IsNormalCharacter() {
 			sr.Set(idx, rr)
 		}

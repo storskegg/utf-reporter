@@ -12,7 +12,7 @@ import (
 	"github.com/chzyer/readline/runes"
 	"github.com/fatih/color"
 	"github.com/rodaine/table"
-	rune2 "github.com/storskegg/utf-reporter/rune"
+	"github.com/storskegg/utf-reporter/runic"
 )
 
 func printUsage() {
@@ -88,13 +88,13 @@ func main() {
 
 	// Capture piped input, capturing runes
 	reader := bufio.NewReader(input)
-	//captured := make(rune2.SpecialRunesLines)
+	//captured := make(runic.SpecialRunesLines)
 
 	lineNum := 0
 	colNum := 0
 
-	var sr rune2.SpecialRunes
-	var rr rune2.Rune
+	var sr runic.SpecialRunes
+	var rr runic.Runic
 
 	// Set up our console formatters
 	titleFmt := color.New(color.FgHiWhite, color.Bold).PrintfFunc()
@@ -117,7 +117,7 @@ func main() {
 			break
 		}
 
-		sr = rune2.ProcessLine(string(input))
+		sr = runic.ProcessLine(string(input))
 		if sr == nil {
 			continue
 		}

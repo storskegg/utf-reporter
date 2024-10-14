@@ -1,4 +1,4 @@
-package rune2
+package runic
 
 import (
 	"reflect"
@@ -23,14 +23,14 @@ func TestProcessLine(t *testing.T) {
 			name: "Señor",
 			args: args{line: "Señor"},
 			want: specialRunes{
-				2: localRune('ñ'),
+				2: runic('ñ'),
 			},
 		},
 		{
 			name: "4th semicolon is greek question mark",
 			args: args{line: ";;;;;;;"},
 			want: specialRunes{
-				3: localRune(';'),
+				3: runic(';'),
 			},
 		},
 	}
@@ -46,22 +46,22 @@ func TestProcessLine(t *testing.T) {
 func TestRune_CharCode(t *testing.T) {
 	tests := []struct {
 		name string
-		r    Rune
+		r    Runic
 		want int
 	}{
 		{
 			name: "ñ, as in Señor",
-			r:    localRune('ñ'),
+			r:    runic('ñ'),
 			want: 241,
 		},
 		{
 			name: "fancy forward double quotes",
-			r:    localRune('“'),
+			r:    runic('“'),
 			want: 8220,
 		},
 		{
 			name: "greek question mark",
-			r:    localRune(';'),
+			r:    runic(';'),
 			want: 894,
 		},
 	}
@@ -77,22 +77,22 @@ func TestRune_CharCode(t *testing.T) {
 func TestRune_CharCodeWithPadding(t *testing.T) {
 	tests := []struct {
 		name string
-		r    Rune
+		r    Runic
 		want string
 	}{
 		{
 			name: "ñ, as in Señor",
-			r:    localRune('ñ'),
+			r:    runic('ñ'),
 			want: "00f1",
 		},
 		{
 			name: "fancy forward double quotes",
-			r:    localRune('“'),
+			r:    runic('“'),
 			want: "201c",
 		},
 		{
 			name: "greek question mark",
-			r:    localRune(';'),
+			r:    runic(';'),
 			want: "037e",
 		},
 	}
@@ -108,47 +108,47 @@ func TestRune_CharCodeWithPadding(t *testing.T) {
 func TestRune_IsNormalCharacter(t *testing.T) {
 	tests := []struct {
 		name string
-		r    Rune
+		r    Runic
 		want bool
 	}{
 		{
 			name: "Latin Capital S",
-			r:    localRune('S'),
+			r:    runic('S'),
 			want: true,
 		},
 		{
 			name: "Left Double Quotation Mark",
-			r:    localRune('“'),
+			r:    runic('“'),
 			want: false,
 		},
 		{
 			name: "ASCII Equal Sign",
-			r:    localRune('='),
+			r:    runic('='),
 			want: true,
 		},
 		{
 			name: "High Surrogates",
-			r:    localRune('𝐜'),
+			r:    runic('𝐜'),
 			want: false,
 		},
 		{
 			name: "ASCII standard space",
-			r:    localRune(' '),
+			r:    runic(' '),
 			want: true,
 		},
 		{
 			name: "Zero Width Space (ZWSP)",
-			r:    localRune('​'),
+			r:    runic('​'),
 			want: false,
 		},
 		{
 			name: "ASCII newline",
-			r:    localRune('\n'),
+			r:    runic('\n'),
 			want: true,
 		},
 		{
 			name: "Cyrillic Small Letter Ie",
-			r:    localRune('е'),
+			r:    runic('е'),
 			want: false,
 		},
 	}
@@ -170,9 +170,9 @@ func TestSpecialRunes_SortedColumns(t *testing.T) {
 		{
 			name: "rename me",
 			s: &specialRunes{
-				2:  localRune('ñ'),
-				20: localRune('“'),
-				13: localRune(';'),
+				2:  runic('ñ'),
+				20: runic('“'),
+				13: runic(';'),
 			},
 			want: []int{2, 13, 20},
 		},
