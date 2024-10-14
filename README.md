@@ -26,6 +26,12 @@ Obviously, this could be solved by "simply supporting extended charsets," but in
 
 I needed something to parse through massive CSV's, so I ported the pen to this little CLI app.
 
+## Building
+
+Compile by hand on/for your system of choice. I build on *nix with `make`.
+
+Also, `make` expects `upx` to be installed for binary compression, but it is not required. If missing, it'll build just find, but say that it can't find the `upx` binary.
+
 ## Running
 
 `utf-reporter` supports supports both piped stdin and a file flag.
