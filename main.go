@@ -105,6 +105,22 @@ func main() {
 	var tbl table.Table
 
 	for {
+		input, _, err := reader.ReadLine()
+		if err != nil && err == io.EOF {
+			break
+		}
+
+		lineNum++
+
+		if len(input) == 0 {
+			continue
+		}
+
+		sr = runic.ProcessLine(string(input))
+		if sr == nil {
+			continue
+		}
+
 		// Create a table for each line
 		tbl = table.New("Column", "Rune", "Hex", "Type", "Width", "Reference")
 		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt).WithPadding(3)
@@ -112,15 +128,6 @@ func main() {
 			return runes.WidthAll([]rune(s))
 		})
 
-		input, _, err := reader.ReadLine()
-		if err != nil && err == io.EOF {
-			break
-		}
-
-		sr = runic.ProcessLine(string(input))
-		if sr == nil {
-			continue
-		}
 		for _, colNum = range sr.SortedColumns() {
 			rr, _ = sr.Get(colNum)
 			tbl.AddRow(
@@ -134,11 +141,10 @@ func main() {
 		}
 
 		// Print our title and table
-		titleFmt("Line %d Table\n", lineNum+1)
+		titleFmt("Line %d Table\n", lineNum)
 		tbl.Print()
 		fmt.Println()
 		//captured[lineNum] = sr
-		lineNum++
 	}
 
 	if lineNum == 0 {
