@@ -4,3 +4,7 @@ and others n​ot so much. Ｔhis text contains only one of the usual characters
 you ｍight expect to see, as well as ⒈ a variety of characters that you won't
 see, and ⒉ common unicode 𝐜haracters that are less obvious‚ like fancy quotes,
 or the Greеk questionmark. ;;;;;;;
+
+Additionally, not all lines will have unicode or special characters, and this
+paragraph is representative of that.
+But this line does...have them. 💩
